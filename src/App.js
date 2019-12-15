@@ -1,6 +1,17 @@
 import React, { Component } from 'react';
-import './App.css';
+import Appbar from 'muicss/lib/react/appbar';
+import Button from 'muicss/lib/react/button';
+import Container from 'muicss/lib/react/container';
+import Row from 'muicss/lib/react/row';
+import Col from 'muicss/lib/react/col';
+import Form from 'muicss/lib/react/form';
+import Input from 'muicss/lib/react/input';
+import Panel from 'muicss/lib/react/panel';
+import Textarea from 'muicss/lib/react/textarea';
+
 import firebase, { auth, provider } from './firebase.js';
+
+import './App.css';
 
 class App extends Component {
     constructor() {
@@ -16,7 +27,7 @@ class App extends Component {
             items: [],
             user: null
         };
-        
+
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.login = this.login.bind(this);
@@ -27,7 +38,7 @@ class App extends Component {
         auth.onAuthStateChanged((user) => {
             if (user) {
                 this.setState({ user });
-            } 
+            }
         });
         const itemsRef = firebase.database().ref('items');
         itemsRef.on('value', (snapshot) => {
@@ -48,7 +59,7 @@ class App extends Component {
             });
         });
     }
-    
+
     logout() {
         auth.signOut()
             .then(() => {
@@ -59,7 +70,7 @@ class App extends Component {
     }
 
     login() {
-        auth.signInWithPopup(provider) 
+        auth.signInWithPopup(provider)
             .then((result) => {
                 const user = result.user;
                 this.setState({
@@ -99,7 +110,7 @@ class App extends Component {
             }
         });
     }
-    
+
     removeItem(itemId) {
         const itemRef = firebase.database().ref(`/items/${itemId}`);
         itemRef.remove();
@@ -109,32 +120,38 @@ class App extends Component {
         return (
             <div className='app'>
                 <header>
-                    <div className='wrapper'>
+                    <Appbar>
                         <h1>Wanty Things</h1>
                         {this.state.user ?
-                        <button onClick={this.logout}>Log Out</button>                
+                        <Button onClick={this.logout} color="accent">Log Out</Button>
                         :
-                        <button onClick={this.login}>Log In</button>              
+                        <Button onClick={this.login} color="primary">Log In</Button>
                         }
-
-                    </div>
+                    </Appbar>
                 </header>
                 {this.state.user ?
                    <div>
                      <div className='user-profile'>
                        <img src={this.state.user.photoURL} alt="User Avatar"/>
                      </div>
-                        <div className='container'>
+                        <Container className='container' fluid={true}>
+                            <Row>
+                            <Col md="4">
+                            <Panel>
                             <section className="add-item">
-                              <form onSubmit={this.handleSubmit}>
-                                <input type="text" name="username" placeholder="Username" onChange={this.handleChange} value={this.state.user.displayName || this.state.user.email} />
-                                <input type="text" name="title" placeholder="Title" onChange={this.handleChange} value={this.state.currentItem.title} />
-                                <input type="text" name="url" placeholder="Url" onChange={this.handleChange} value={this.state.currentItem.url} />
-                                <input type="text" name="imageUrl" placeholder="Image Url" onChange={this.handleChange} value={this.state.currentItem.imageUrl} />
-                                <textarea name="notes" placeholder="Notes" onChange={this.handleChange} value={this.state.currentItem.notes} />
-                                <button>Add Item</button>
-                              </form>
+                              <Form onSubmit={this.handleSubmit}>
+                                <legend>Add an item</legend>
+                                <Input type="text" name="username" placeholder="Username" onChange={this.handleChange} value={this.state.user.displayName || this.state.user.email} />
+                                <Input type="text" name="title" placeholder="Title" onChange={this.handleChange} value={this.state.currentItem.title} />
+                                <Input type="text" name="url" placeholder="Url" onChange={this.handleChange} value={this.state.currentItem.url} />
+                                <Input type="text" name="imageUrl" placeholder="Image Url" onChange={this.handleChange} value={this.state.currentItem.imageUrl} />
+                                <Textarea name="notes" placeholder="Notes" onChange={this.handleChange} value={this.state.currentItem.notes} />
+                                <Button color="primary">Add Item</Button>
+                              </Form>
                             </section>
+                            </Panel>
+                            </Col>
+                            <Col md="8">
                             <section className='display-item'>
                                 <div className='wrapper'>
                                     <ul>
@@ -148,18 +165,20 @@ class App extends Component {
                                                         <p>{item.notes}</p>
                                                     </div>
                                                     {item.user === this.state.user.displayName || item.user === this.state.user.email ?
-                                                    <button onClick={() => this.removeItem(item.id)}>Remove Item</button> : null}
+                                                    <Button color="danger" onClick={() => this.removeItem(item.id)}>Remove Item</Button> : null}
                                                 </li>
                                             )
                                         })}
                                     </ul>
                                 </div>
                             </section>
-                        </div>
+                            </Col>
+                            </Row>
+                        </Container>
                    </div>
                    :
                    <div className='wrapper'>
-                     <p>You must be logged in to see the potluck list and submit to it.</p>
+                     <p>You must be logged in to do stuff here.</p>
                    </div>
                 }
             </div>
