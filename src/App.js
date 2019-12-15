@@ -154,10 +154,11 @@ class App extends Component {
                             <Col md="8">
                             <section className='display-item'>
                                 <div className='wrapper'>
-                                    <ul>
+                                    <Row>
                                         {this.state.items.map((item) => {
                                             return (
-                                                <li key={item.id}>
+                                                <Col md="6" key={item.id}>
+                                                    <Panel>
                                                     <h3><a href={item.url}>{item.title}</a></h3>
                                                     <div>added by: {item.user}</div>
                                                     <div>
@@ -166,10 +167,11 @@ class App extends Component {
                                                     </div>
                                                     {item.user === this.state.user.displayName || item.user === this.state.user.email ?
                                                     <Button color="danger" onClick={() => this.removeItem(item.id)}>Remove Item</Button> : null}
-                                                </li>
+                                                    </Panel>
+                                                </Col>
                                             )
                                         })}
-                                    </ul>
+                                    </Row>
                                 </div>
                             </section>
                             </Col>

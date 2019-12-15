@@ -1,4 +1,4 @@
-li img {
+.display-item img {
     height: 150px;
 }
 
@@ -13,4 +13,8 @@ li img {
 .user-profile img {
   border-radius: 50%;
   max-width: 100%;
+}
+
+header {
+    margin-bottom: 20px;
 }
